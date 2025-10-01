@@ -1,12 +1,9 @@
 require('dotenv').config();
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const path = require('path');
 
-// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -18,6 +15,22 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
+
+// Serve frontend static files from 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// API routes (example)
+// app.use('/api/products', productRoutes);
+// app.use('/api/users', userRoutes);
+
+// Catch-all route to serve index.html for SPA
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Start server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 // Define Schemas
 const userSchema = new mongoose.Schema({
