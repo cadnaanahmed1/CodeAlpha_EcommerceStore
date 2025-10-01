@@ -56,8 +56,7 @@ let currentUser = null;
 let authToken = null; // Store token separately
 let currentProduct = null;
 
-// API URL - Replace with your actual server URL
-// const API_URL = 'http://localhost:3000/api';
+// API URL - Using your Render server
 const API_URL = 'https://codealpha-ecommercestore.onrender.com/api';
 
 // Initialize the app
