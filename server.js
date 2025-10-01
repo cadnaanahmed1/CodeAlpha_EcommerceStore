@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
+// Import your API routes
+const productRoutes = require('./routes/products');
+const userRoutes = require('./routes/users');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -13,23 +17,22 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-// Serve frontend static files from 'public' folder
+// API routes
+app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
+
+// Serve frontend static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API routes (example)
-// app.use('/api/products', productRoutes);
-// app.use('/api/users', userRoutes);
-
-// Catch-all route to serve index.html for SPA
+// Catch-all route for SPA
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 
 // Define Schemas
