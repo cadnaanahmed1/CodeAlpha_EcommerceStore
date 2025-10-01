@@ -4,10 +4,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
-// Import your API routes
-const productRoutes = require('./routes/products');
-const userRoutes = require('./routes/users');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,17 +13,19 @@ app.use(express.json());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
-// API routes
-app.use('/api/products', productRoutes);
-app.use('/api/users', userRoutes);
+// API routes (haddii aad isticmaasho)
+// const productRoutes = require('./routes/products');
+// const userRoutes = require('./routes/users');
+// app.use('/api/products', productRoutes);
+// app.use('/api/users', userRoutes);
 
-// Serve frontend static files
+// Serve frontend static files from 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Catch-all route for SPA
+// Catch-all route to serve index.html for SPA
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
