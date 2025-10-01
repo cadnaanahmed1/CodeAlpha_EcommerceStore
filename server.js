@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,23 +17,6 @@ app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
-
-// API routes (haddii aad isticmaasho)
-// const productRoutes = require('./routes/products');
-// const userRoutes = require('./routes/users');
-// app.use('/api/products', productRoutes);
-// app.use('/api/users', userRoutes);
-
-// Serve frontend static files from 'public' folder
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Catch-all route to serve index.html for SPA
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-
-
 
 // Define Schemas
 const userSchema = new mongoose.Schema({
@@ -96,7 +81,7 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Routes
+// API Routes
 
 // User Routes
 app.post('/api/users/register', async (req, res) => {
@@ -218,7 +203,6 @@ app.post('/api/products', authenticateToken, async (req, res) => {
     }
 });
 
-// DELETE endpoint for products
 app.delete('/api/products/:id', authenticateToken, async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
@@ -347,6 +331,20 @@ app.get('/api/seed', async (req, res) => {
         console.error('Error seeding data:', error);
         res.status(500).json({ message: 'Server error' });
     }
+});
+
+// Serve frontend static files from 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Catch-all route to serve index.html for SPA
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Server error' });
 });
 
 // Start server
